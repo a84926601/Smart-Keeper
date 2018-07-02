@@ -1,16 +1,18 @@
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(draw_chart);
 $(document).ready(function() {
 year_init();
 month_init(1);
 month_init(2);
 day_init(1);
 day_init(2);
-draw_chart(1,1,0,42364183353);
-draw_chart(1,1,0,4236418335);
+/*draw_chart(1,1,0,42364183353);
+draw_chart(1,1,0,4236418335);*/
 });
 
 function _search()
 {
-    document.getElementById("chart_div").innerHTML=""
+	draw_chart(1,1,0,42364183353)
 }
 
 function year_init()
@@ -109,12 +111,15 @@ function timeConverter(UNIX_timestamp)
 
 function draw_chart(id , type , lower , upper)
 {
-    var combined = new Array();
-    combined[0] = ['Time', 'Usage'];
+	id=id==null?1:id;
+	type=type==null?1:type;
+	lower=lower==null?0:lower;
+	upper=upper==null?42364183353:upper;
+    var combined = new Array;
+	combined.push(["Time","Usage"])
     $.get("data", function(data){
         var json_verify
         var i=0
-        var count=1
         while(json_verify=JSON.stringify(data[i]))
         {
             var data_parse = JSON.parse(json_verify)
@@ -122,25 +127,22 @@ function draw_chart(id , type , lower , upper)
             {
                 var tim=timeConverter(data_parse.time)
                 var pow=parseInt(data_parse.power)
-                combined[count] = [tim , pow]
-                count++
+                combined.push([tim , pow])
             }
             i++
         }
+		console.log(combined)
+	var data = google.visualization.arrayToDataTable(combined,false);
+	var options = {
+		title : 'Usage',
+		vAxis: {title: 'Usage'},
+		hAxis: {title: 'Time'},
+		seriesType: 'bars',
+		series: {5: {type: 'line'}}
+	};
+	var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+	chart.draw(data, options);
     });
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(drawVisualization);
-    function drawVisualization()
-    {
-        var data = google.visualization.arrayToDataTable(combined,false);
-        var options = {
-            title : 'Usage',
-            vAxis: {title: 'Usage'},
-            hAxis: {title: 'Time'},
-            seriesType: 'bars',
-            series: {5: {type: 'line'}}
-        };
-        var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
-    }
+
+	
 }
