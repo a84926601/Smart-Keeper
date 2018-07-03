@@ -8,6 +8,19 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 
+var mongoose = require('mongoose');
+//var dburl = 'mongodb://admin:123EWQasd@140.125.33.34:27017/electricity?authMechanism=DEFAULT&authSource=db&ssl=true';
+var dburl = 'mongodb://localhost/electricity';
+mongoose.connect(dburl);
+var db = mongoose.connection;
+db.on('error',function callback(){
+	console.log("Connection error");
+});
+
+db.once('open',function callback(){
+	console.log("Mongo working");
+});
+
 var app = express();
 
 // view engine setup
