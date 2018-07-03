@@ -4,7 +4,7 @@
         <meta name="viewport" content="width=device-width",initial-scale=1">
         <title><%=title %></title>
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
         <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
     </head>
@@ -48,12 +48,22 @@
             month_init(2);
             day_init(1);
             day_init(2);
-            /*draw_chart(1,1,0,42364183353);
-            draw_chart(1,1,0,4236418335);*/
+            draw_chart(1,1,0,42364183353);
+            draw_chart(1,1,0,4236418335);
             });
 
             function _search()
             {
+                var year1 = document.getElementById('Year1').value
+                var month1 = document.getElementById('Month1').value
+                var day1 = document.getElementById('Day1').value
+                var year2 = document.getElementById('Year2').value
+                var month2 = document.getElementById('Month2').value
+                var day2 = document.getElementById('Day2').value
+                var tt1 = year1+'-'+month1+'-'+day1;
+                var tt2 = year2+'-'+month2+'-'+day2;
+                var lower = (new Date(tt1).getTime())/1000;
+                var upper = (new Date(tt2).getTime())/1000;
                 draw_chart(1,1,0,42364183353)
             }
 
@@ -184,8 +194,6 @@
                 var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
                 chart.draw(data, options);
                 });
-
-
             }
         </script>
     </body>
