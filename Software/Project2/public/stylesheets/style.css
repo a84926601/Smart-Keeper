@@ -1,0 +1,29 @@
+body {
+  padding: 50px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+ul li
+{
+    display:inline;
+}
+
+.tex
+{
+    padding:2px 5px 2px 5px;
+    border_radius:3px;
+    cursor:pointer;
+}
+
+.btn
+{
+    width:80px;
+    padding 3px 5px 3px 5px;
+    border_radius:3px;
+    font-weight: bold;
+    cursor:pointer;
+}
