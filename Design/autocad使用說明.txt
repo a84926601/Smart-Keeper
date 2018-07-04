@@ -1,0 +1,16 @@
+1.去官網下載AutoCAD 2019(試用版30天)
+https://www.autodesk.com.tw/products/autocad/free-trial
+
+2.下載開啟AutoCAD，然後點選"設定"符號的圖示，選擇3D建模(就會切換到3D模式了)
+
+3.基礎入門教學(1~4，其他的可以依需求去看)
+https://www.youtube.com/watch?v=piYclEqUU80&list=PLwwPq48LW7z-0LXattH-uHB0JJxgDV43y
+
+4.3D圖形的建構(可以依需求參考他的影片)
+https://www.youtube.com/watch?v=7_xd3RRgPRA&list=PLkyKIAm8-pyg1t54BLRJw2FhzjpTdsWys
+
+5.其他技巧
+AutoCAD 3D 快速學會 擠出與按拉的差別
+https://www.youtube.com/watch?v=bLQlfhaxNyU
+AutoCAD 3D 快速學會 擠出範例 按鍵
+https://www.youtube.com/watch?v=TQp-1L5CT8g
