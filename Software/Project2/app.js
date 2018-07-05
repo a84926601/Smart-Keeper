@@ -6,18 +6,20 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
+#var data = require('./routes/data');
+#var chart = require('./routes/chart');
 var users = require('./routes/users');
 
 var app = express();
 
 const mongoose=require('mongoose');
-mongoose.connect('mongodb://140.125.33.32:27017/electricity');
+mongoose.connect('mongodb://140.125.33.34:27017/electricity');
+mongoose.Promise = global.Promise;
 mongoose.connection.once('open',function(){
-	console.log('success');
+	console.log('successful');
 }).on('error',function(error){
 	console.log('fail by '+error);
 });
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -32,6 +34,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
+#app.use('/data', data);
+#app.use('/chart', chart);
 app.use('/users', users);
 
 // catch 404 and forward to error handler

@@ -5,34 +5,18 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var index = require('./routes/index');
-var users = require('./routes/users');
+var router = express.Router();
+var app = express();
 
-var url = 'mongodb://admin:123EWQasd@140.125.33.34:27017/electricity?authMechanism=DEFAULT&authSource=db&ssl=true';
-var MongoClient = require('mongodb').MongoClient 
-    , assert = require('assert');
-
-//var url = 'mongodb://140.125.33.34:27017/electricity';
-
-MongoClient.connect(url, function (err, db) { 
-    
-    assert.equal(null, err); 
-    var counter = 0; 
-    var restData = db.collection('restaurants').find();
-
-    restData.each(function (err,doc) { 
-        if (doc != null) { 
-            counter++; 
-        } else { 
-            db.close(); 
-            console.log("Counter : " + counter); 
-        } 
-    }); 
-   
-    return console.log("Connected correctly to server"); 
+const mongoose=require('mongoose');
+mongoose.connect('mongodb://140.125.33.34:27017/electricity');
+mongoose.Promise = global.Promise;
+mongoose.connection.once('open',function(){
+        console.log('successful');
+}).on('error',function(error){
+        console.log('fail by '+error);
 });
 
-var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -41,13 +25,35 @@ app.set('view engine', 'ejs');
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
+
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
-app.use('/users', users);
+app.get('/',function(req, res, next){
+  console.log(req.query)
+  if(req.query.upper==null || req.query.lower==null)
+	res.render('index',{title: 'Smart-keeper',upper:0 ,lower:0});
+  else
+	res.render('index',{title: 'Smart-keeper',upper:req.query.upper ,lower:req.query.lower});
+});
+
+app.get('/index',function(req, res, next){
+  console.log(req.query)
+  if(req.query.upper==null || req.query.lower==null)
+        res.render('index',{title: 'Smart-keeper',upper:0 ,lower:0});
+  else
+	res.render('index',{title: 'Smart-keeper',upper:req.query.upper ,lower:req.query.lower});
+});
+app.get('/data',function(req, res, next){
+  res.render('data',{title: 'data'});
+});
+app.get('/chart',function(req, res, next){
+  res.render('chart',{title: 'Chart'});
+});
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
