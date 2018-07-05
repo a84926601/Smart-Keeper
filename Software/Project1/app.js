@@ -9,7 +9,17 @@ var router = express.Router();
 var app = express();
 
 const mongoose=require('mongoose');
-mongoose.connect('mongodb://140.125.33.34:27017/electricity');
+const dataSchema = mongoose.Schema({
+    id: Number,
+    type: Number,
+    time: Number,
+    power: Number
+});
+
+var Data = mongoose.model('Data', dataSchema);
+module.exports = Data;
+
+mongoose.connect('mongodb://127.0.0.1:27017/electricity');
 mongoose.Promise = global.Promise;
 mongoose.connection.once('open',function(){
         console.log('successful');
@@ -32,24 +42,90 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//===============insert data===============
+var tt = new Data({
+    id:1,
+    type:1,
+    time:1530835000,
+    power:100
+});
+
+//tt.save(function(err){
+//    if(err)
+//	throw err
+//    else
+//    console.log('success');
+//});
+// ========================================
+var dat = new Date();
+var dd = dat.getDate();
+var mm = dat.getMonth()+1;
+var yy = dat.getFullYear();
+var tt = yy+'-'+mm+'-'+dd;
+var lower = (new Date(tt).getTime())/1000+86400;
+var upper = lower+86400;
 app.get('/',function(req, res, next){
-  console.log(req.query)
-  if(req.query.upper==null || req.query.lower==null)
-	res.render('index',{title: 'Smart-keeper',upper:0 ,lower:0});
+  //console.log(req.query)
+  lower=req.query.lower==null?lower:req.query.lower;
+  upper=req.query.upper==null?upper:req.query.upper;
+  Data.find({time:{$gte:lower,$lte:upper}},function(err, datas){
+      if(err) throw err;
+      //console.log(datas);
+      jn=datas;
+  });
+  if(jn[0]==null) jn=null;
   else
-	res.render('index',{title: 'Smart-keeper',upper:req.query.upper ,lower:req.query.lower});
+  {
+    var tmp='{';
+    var count=0;
+    while(jn[count]!=null)
+    {
+	if(count==0)
+	    tmp = tmp + jn[count];
+	else
+	    tmp = tmp + ',' +  jn[count];
+	count++;
+    };
+    tmp=tmp+'}';
+    jn = tmp;
+    console.log(jn);
+  }
+  res.render('index',{title: 'Smart-keeper',upper:upper ,lower:lower , result:jn});
 });
 
 app.get('/index',function(req, res, next){
-  console.log(req.query)
-  if(req.query.upper==null || req.query.lower==null)
-        res.render('index',{title: 'Smart-keeper',upper:0 ,lower:0});
+  //console.log(req.query)
+  lower=req.query.lower==null?lower:req.query.lower;
+  upper=req.query.upper==null?upper:req.query.upper;
+  Data.find({time:{$gte:lower,$lte:upper}},function(err, datas){
+      if(err) throw err;
+      //console.log(datas);
+      jn=datas;
+  });
+  if(jn[0]==null) jn=null;
   else
-	res.render('index',{title: 'Smart-keeper',upper:req.query.upper ,lower:req.query.lower});
+  {
+    var tmp='{';
+    var count=0;
+    while(jn[count]!=null)
+    {
+        if(count==0)
+            tmp = tmp + jn[count];
+        else
+            tmp = tmp + ',' +  jn[count];
+        count++;
+    };
+    tmp=tmp+'}';
+    jn = tmp;
+    console.log(jn);
+  }
+  res.render('index',{title: 'Smart-keeper',upper:upper ,lower:lower, result:jn});
 });
+
 app.get('/data',function(req, res, next){
   res.render('data',{title: 'data'});
 });
+
 app.get('/chart',function(req, res, next){
   res.render('chart',{title: 'Chart'});
 });

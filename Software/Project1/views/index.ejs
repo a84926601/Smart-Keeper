@@ -2,12 +2,12 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width",initial-scale=1">
-        <title><%=upper %></title>
+        <title><%=title%></title>
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
         <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
-    </head>
+	</head>
     <body>
         <div class="container">
             <h1>Chart</h1><hr>
@@ -40,8 +40,10 @@
             </ul>
 	    </form>
             <div id="chart_div" style="width: 900px; height: 500px;"></div>
+	    <input type="hidden" id="result" value="<%=result%>">
         </div>
         <script>
+	    var result=document.getElementById('result').value
             google.charts.load('current', {'packages':['corechart']});
             google.charts.setOnLoadCallback(draw_chart);
             $(document).ready(function() {
@@ -50,8 +52,20 @@
             month_init(2);
             day_init(1);
             day_init(2);
-            draw_chart(1,1,0,42364183353);
-            draw_chart(1,1,0,4236418335);
+	    <%
+		if(lower==0&&upper==0)
+		{
+		    %>
+        	    draw_chart(1,1,<%=lower%>,<%=upper%>);
+		    <%
+		}
+		else
+		{
+		    %>
+		    draw_chart(1,1,<%=lower%>,<%=upper%>);
+		    <%
+		}
+	    %>
             });
 
             function _search()
@@ -64,8 +78,8 @@
                 var day2 = document.getElementById('Day2').value
                 var tt1 = year1+'-'+month1+'-'+day1;
                 var tt2 = year2+'-'+month2+'-'+day2;
-                var lower = (new Date(tt1).getTime())/1000;
-                var upper = (new Date(tt2).getTime())/1000;
+                var lower = (new Date(tt1).getTime())/1000+28800;
+                var upper = (new Date(tt2).getTime())/1000+28800;
                 if(lower>upper)
                 {
                     var tmp=lower
@@ -74,8 +88,6 @@
                 }
                 upper+=86400
 		location.replace("index?upper="+upper+"&lower="+lower)
-		//document.getElementById("sear").submit()
-		//draw_chart(1,1,lower,upper);
             }
 
             function year_init()
@@ -173,12 +185,12 @@
 
             function draw_chart(id , type , lower , upper)
             {
-                id=id==null?1:id;
+		id=id==null?1:id;
                 type=type==null?1:type;
-                lower=lower==null?0:lower;
-                upper=upper==null?42364183353:upper;
                 var combined = new Array;
-                combined.push(["Time","Usage"])
+                combined.push(["Time","Usage"]);
+		var obj = JSON.parse(result);
+		
                 $.get("data", function(data){
                     var json_verify
                     var i=0
