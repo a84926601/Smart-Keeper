@@ -2,32 +2,48 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width",initial-scale=1">
-        <title>Hello world</title>
+        <title><%=title%></title>
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    </head>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+	</head>
     <body>
         <div class="container">
             <h1>Chart</h1><hr>
-            <table style="width: 600px;">
-                <tr align="center">
-                    <td style="width: 20%;">
-                        <select id="Year1" style="float: left; margin: 0px 5px 0px 5px;" onchange="month_init(1)"></select>
-                        <select id="Month1" onchange="day_init(1)" style="display:none; float: left; margin: 0px 5px 0px 5px;"></select>
-                        <select id="Day1" style="display:none; float: left; margin: 0px 5px 0px 5px;"></select>
-                    </td>
-                    <td style="width: 8%;">至</td>
-                    <td style="width: 20%;">
-                        <select id="Year2" style="float: left; margin: 0px 5px 0px 5px;" onchange="month_init(2)"></select>
-                        <select id="Month2" onchange="day_init(2)" style="display:none; float: left; margin: 0px 5px 0px 5px;"></select>
-                        <select id="Day2" style="display:none; float: left; margin: 0px 5px 0px 5px;"></select>
-                    </td>
-                    <td style="width: 8%;"><input id="sear" type="button" value="查詢" onclick="_search()"></td>
-                </tr>
-            </table>
+	    <form id="sear" method="get" action="/">
+	    <ul>
+                <li>
+                        <select class="tex" id="Year1" style="margin: 0px 5px 0px 5px; onchange="month_init(1)"></select>
+                </li>
+                <li>
+                        <select class="tex" id="Month1" onchange="day_init(1)" style="display:none; margin: 0px 5px 0px 5px;"></select>
+                </li>
+                <li>
+                        <select class="tex" id="Day1" style="display:none; margin: 0px 5px 0px 5px;"></select>
+                </li>
+                <li>
+                       <span> 至</span>
+                </li>
+                <li>
+                        <select class="tex" id="Year2" style="margin: 0px 5px 0px 5px;" onchange="month_init(2)"></select>
+                </li>
+                <li>
+                        <select class="tex" id="Month2" onchange="day_init(2)" style="display:none; margin: 0px 5px 0px 5px;"></select>
+                </li>
+                <li>
+                        <select class="tex" id="Day2" style="display:none; margin: 0px 5px 0px 5px;"></select>
+                </li>
+                <li>
+                        <input class="btn" id="sear" type="button" value="查詢" onclick="_search()">
+                </li>
+            </ul>
+	    </form>
             <div id="chart_div" style="width: 900px; height: 500px;"></div>
+	    <input type="hidden" id="result" value="<%=result%>">
         </div>
         <script>
+	    var result=document.getElementById('result').value
             google.charts.load('current', {'packages':['corechart']});
             google.charts.setOnLoadCallback(draw_chart);
             $(document).ready(function() {
@@ -36,13 +52,42 @@
             month_init(2);
             day_init(1);
             day_init(2);
-            /*draw_chart(1,1,0,42364183353);
-            draw_chart(1,1,0,4236418335);*/
+	    <%
+		if(lower==0&&upper==0)
+		{
+		    %>
+        	    draw_chart(1,1,<%=lower%>,<%=upper%>);
+		    <%
+		}
+		else
+		{
+		    %>
+		    draw_chart(1,1,<%=lower%>,<%=upper%>);
+		    <%
+		}
+	    %>
             });
 
             function _search()
             {
-                draw_chart(1,1,0,42364183353)
+                var year1 = document.getElementById('Year1').value
+                var month1 = document.getElementById('Month1').value
+                var day1 = document.getElementById('Day1').value
+                var year2 = document.getElementById('Year2').value
+                var month2 = document.getElementById('Month2').value
+                var day2 = document.getElementById('Day2').value
+                var tt1 = year1+'-'+month1+'-'+day1;
+                var tt2 = year2+'-'+month2+'-'+day2;
+                var lower = (new Date(tt1).getTime())/1000+28800;
+                var upper = (new Date(tt2).getTime())/1000+28800;
+                if(lower>upper)
+                {
+                    var tmp=lower
+                    lower=upper
+                    upper=tmp
+                }
+                upper+=86400
+		location.replace("index?upper="+upper+"&lower="+lower)
             }
 
             function year_init()
@@ -65,12 +110,11 @@
                 document.getElementById("Year2").innerHTML=yy;
             }
 
-
             function month_init(_id)
             {
                 var d=new Date();
                 var m=d.getMonth()+1;
-                document.getElementById("Month"+_id).style.display="block";
+                document.getElementById("Month"+_id).style.display="inline";
                 var mm
                 for(var i=1;i<=12;i++)
                 {
@@ -84,7 +128,7 @@
 
             function day_init(_id)
             {
-                document.getElementById("Day"+_id).style.display="block";
+                document.getElementById("Day"+_id).style.display="inline";
                 var d=new Date();
                 var da=d.getDate();
                 var dd
@@ -141,12 +185,12 @@
 
             function draw_chart(id , type , lower , upper)
             {
-                id=id==null?1:id;
+		id=id==null?1:id;
                 type=type==null?1:type;
-                lower=lower==null?0:lower;
-                upper=upper==null?42364183353:upper;
                 var combined = new Array;
-                combined.push(["Time","Usage"])
+                combined.push(["Time","Usage"]);
+		var obj = JSON.parse(result);
+		
                 $.get("data", function(data){
                     var json_verify
                     var i=0
@@ -173,10 +217,9 @@
                 var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
                 chart.draw(data, options);
                 });
-
-                
             }
         </script>
     </body>
 </html>
+
 
