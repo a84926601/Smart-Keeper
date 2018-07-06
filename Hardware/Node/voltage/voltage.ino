@@ -4,7 +4,7 @@
  * 測量交流電為 110AC or 220VAC
  * 取最高值，對應到0~220，看其峰值離110近還是220來判斷此為110 or 220
  */
-const int analogInPin = A0;
+const int analogInPin = A1;
 //const int analogOutPin = 3; 燈泡測試
 
 int sensor_Value = 0;

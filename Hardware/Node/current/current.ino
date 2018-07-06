@@ -8,7 +8,7 @@
 
 // We have 30 amps version sensor connected to A0 pin of arduino
 // Replace with your version if necessary
-ACS712 sensor(ACS712_30A, A0);
+ACS712 sensor(ACS712_20A, A0);
 
 void setup() {
   Serial.begin(9600);
