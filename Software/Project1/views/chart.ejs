@@ -1,0 +1,210 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width",initial-scale=1">
+        <title><%=title %></title>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            <h1>Chart</h1><hr>
+	    <ul>
+                <li>
+                        <select class="tex" id="Year1" style="margin: 0px 5px 0px 5px; onchange="month_init(1)"></select>
+                </li>
+                <li>
+                        <select class="tex" id="Month1" onchange="day_init(1)" style="display:none; margin: 0px 5px 0px 5px;"></select>
+                </li>
+                <li>
+                        <select class="tex" id="Day1" style="display:none; margin: 0px 5px 0px 5px;"></select>
+                </li>
+                <li>
+                       <span> 至</span>
+                </li>
+                <li>
+                        <select class="tex" id="Year2" style="margin: 0px 5px 0px 5px;" onchange="month_init(2)"></select>
+                </li>
+                <li>
+                        <select class="tex" id="Month2" onchange="day_init(2)" style="display:none; margin: 0px 5px 0px 5px;"></select>
+                </li>
+                <li>
+                        <select class="tex" id="Day2" style="display:none; margin: 0px 5px 0px 5px;"></select>
+                </li>
+                <li>
+                        <input class="btn" id="sear" type="button" value="查詢" onclick="_search()">
+                </li>
+            </ul>
+            <div id="chart_div" style="width: 900px; height: 500px;"></div>
+        </div>
+        <script>
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(draw_chart);
+            $(document).ready(function() {
+            year_init();
+            month_init(1);
+            month_init(2);
+            day_init(1);
+            day_init(2);
+            draw_chart(1,1,0,42364183353);
+            draw_chart(1,1,0,4236418335);
+            });
+
+            function _search()
+            {
+                var year1 = document.getElementById('Year1').value
+                var month1 = document.getElementById('Month1').value
+                var day1 = document.getElementById('Day1').value
+                var year2 = document.getElementById('Year2').value
+                var month2 = document.getElementById('Month2').value
+                var day2 = document.getElementById('Day2').value
+                var tt1 = year1+'-'+month1+'-'+day1;
+                var tt2 = year2+'-'+month2+'-'+day2;
+                var lower = (new Date(tt1).getTime())/1000;
+                var upper = (new Date(tt2).getTime())/1000;
+                if(lower>upper)
+                {
+                    var tmp=lower
+                    lower=upper
+                    upper=tmp
+                }
+                upper+=86400
+                alert('lower:'+lower+"   upper:"+upper);
+		draw_chart(1,1,lower,upper);
+            }
+
+            function year_init()
+            {
+                var d=new Date();
+                var y=d.getFullYear();
+                var yy
+                for(var i=y;i>=(y-10);i--)
+                {
+                    if(i!=y)
+                    {
+                        yy=yy+"<option value='"+i+"'>"+i+"年</option>"
+                    }
+                    else
+                    {
+                        yy=yy+"<option value='"+i+"' selected='selected'>"+i+"年</option>"
+                    }
+                }
+                document.getElementById("Year1").innerHTML=yy;
+                document.getElementById("Year2").innerHTML=yy;
+            }
+
+            function month_init(_id)
+            {
+                var d=new Date();
+                var m=d.getMonth()+1;
+                document.getElementById("Month"+_id).style.display="inline";
+                var mm
+                for(var i=1;i<=12;i++)
+                {
+                    if(m==i)
+                        mm=mm+"<option value='"+i+"' selected='selected'>"+i+"月</option>"
+                    else
+                        mm=mm+"<option value='"+i+"'>"+i+"月</option>"
+                }
+                document.getElementById("Month"+_id).innerHTML=mm;
+            }
+
+            function day_init(_id)
+            {
+                document.getElementById("Day"+_id).style.display="inline";
+                var d=new Date();
+                var da=d.getDate();
+                var dd
+                var last_day
+                var y=document.getElementById("Year"+_id).value;
+                var m=document.getElementById("Month"+_id).value;
+                var days=[31,28,31,30,31,30,31,31,30,31,30,31]
+                if((y%4)==0)
+                {
+                    if(m==2)
+                    {
+                        last_day=29
+                    }
+                    else
+                    {
+                        if((m-1)!=-1)
+                            last_day=days[m-1];
+                    }
+                }
+                else
+                {
+                    if(m==2)
+                    {
+                        last_day=28
+                    }
+                    else
+                    {
+                        last_day=days[m-1];
+                    }
+                }
+                for(var i=1;i<=last_day;i++)
+                {
+                    if(i==da)
+                        dd=dd+"<option value='"+i+"' selected='selected'>"+i+"日</option>"
+                    else
+                        dd=dd+"<option value='"+i+"'>"+i+"日</option>"
+                }
+                document.getElementById("Day"+_id).innerHTML=dd;
+            }
+
+            function timeConverter(UNIX_timestamp)
+            {
+                var a = new Date(UNIX_timestamp * 1000);
+                var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                var year = a.getFullYear();
+                var month = months[a.getMonth()];
+                var date = a.getDate();
+                var hour = a.getHours();
+                var min = a.getMinutes();
+                var sec = a.getSeconds();
+                var time = (a.getMonth()+1) + '/' + date + ' ' + hour + ':' + min;
+                return time;
+            }
+
+            function draw_chart(id , type , lower , upper)
+            {
+                id=id==null?1:id;
+                type=type==null?1:type;
+                lower=lower==null?0:lower;
+                upper=upper==null?42364183353:upper;
+                var combined = new Array;
+                combined.push(["Time","Usage"])
+                $.get("data", function(data){
+                    var json_verify
+                    var i=0
+                    while(json_verify=JSON.stringify(data[i]))
+                    {
+                        var data_parse = JSON.parse(json_verify)
+                        if((data_parse.time>=lower)&&(data_parse.time<=upper))
+                        {
+                            var tim=timeConverter(data_parse.time)
+                            var pow=parseInt(data_parse.power)
+                            combined.push([tim , pow])
+                        }
+                        i++
+                    }
+                    console.log(combined)
+                var data = google.visualization.arrayToDataTable(combined,false);
+                var options = {
+                    title : 'Usage',
+                    vAxis: {title: 'Usage'},
+                    hAxis: {title: 'Time'},
+                    seriesType: 'bars',
+                    series: {5: {type: 'line'}}
+                };
+                var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+                chart.draw(data, options);
+                });
+            }
+        </script>
+    </body>
+</html>
+
+

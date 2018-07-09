@@ -5,18 +5,29 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+<<<<<<< HEAD
 var router = express.Router();
+=======
+var index = require('./routes/index');
+#var data = require('./routes/data');
+#var chart = require('./routes/chart');
+var users = require('./routes/users');
+
+>>>>>>> 27552dfb491c3c33715a634cedf2233d4e22982e
 var app = express();
 
 const mongoose=require('mongoose');
 mongoose.connect('mongodb://140.125.33.34:27017/electricity');
 mongoose.Promise = global.Promise;
 mongoose.connection.once('open',function(){
+<<<<<<< HEAD
         console.log('successful');
+=======
+	console.log('successful');
+>>>>>>> 27552dfb491c3c33715a634cedf2233d4e22982e
 }).on('error',function(error){
         console.log('fail by '+error);
 });
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -32,6 +43,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+<<<<<<< HEAD
 app.get('/',function(req, res, next){
   console.log(req.query)
   if(req.query.upper==null || req.query.lower==null)
@@ -54,6 +66,12 @@ app.get('/chart',function(req, res, next){
   res.render('chart',{title: 'Chart'});
 });
 
+=======
+app.use('/', index);
+#app.use('/data', data);
+#app.use('/chart', chart);
+app.use('/users', users);
+>>>>>>> 27552dfb491c3c33715a634cedf2233d4e22982e
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

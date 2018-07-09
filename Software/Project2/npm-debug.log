@@ -7,7 +7,7 @@
 6 silly lifecycle project2@0.0.0~prestart: no script for prestart, continuing
 7 info lifecycle project2@0.0.0~start: project2@0.0.0
 8 verbose lifecycle project2@0.0.0~start: unsafe-perm in lifecycle true
-9 verbose lifecycle project2@0.0.0~start: PATH: /usr/local/lib/node_modules/npm/bin/node-gyp-bin:/root/intelligent_manager/Smart-Keeper/Software/Project2/node_modules/.bin:/usr/lib/git-core:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+9 verbose lifecycle project2@0.0.0~start: PATH: /usr/local/lib/node_modules/npm/bin/node-gyp-bin:/root/intelligent_manager/Smart-Keeper/Software/Project2/node_modules/.bin:/usr/local/bin/:/usr/lib/git-core:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 10 verbose lifecycle project2@0.0.0~start: CWD: /root/intelligent_manager/Smart-Keeper/Software/Project2
 11 silly lifecycle project2@0.0.0~start: Args: [ '-c', 'node ./bin/www' ]
 12 silly lifecycle project2@0.0.0~start: Returned: code: 1  signal: null
