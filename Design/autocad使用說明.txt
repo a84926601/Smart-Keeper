@@ -10,7 +10,15 @@ https://www.youtube.com/watch?v=piYclEqUU80&list=PLwwPq48LW7z-0LXattH-uHB0JJxgDV
 https://www.youtube.com/watch?v=7_xd3RRgPRA&list=PLkyKIAm8-pyg1t54BLRJw2FhzjpTdsWys
 
 5.其他技巧
+(1)影片:
 AutoCAD 3D 快速學會 擠出與按拉的差別
 https://www.youtube.com/watch?v=bLQlfhaxNyU
 AutoCAD 3D 快速學會 擠出範例 按鍵
 https://www.youtube.com/watch?v=TQp-1L5CT8g
+(2)指令:
+加厚:THICKEN
+https://www.youtube.com/watch?v=jB9EBjeL9YI&list=PL9yNzj-ctxjIrLtiUEuL_Duo3awMOryj4&index=7
+
+6.AutoCAD 3D列印說明
+https://3dmart.com.tw/tutorials/Various-types-3d-software-export-to-stl-and-obj
+
