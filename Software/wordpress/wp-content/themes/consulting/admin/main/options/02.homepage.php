@@ -302,98 +302,58 @@ $thinkup_homepage_section3_link  = consulting_thinkup_var ( 'thinkup_homepage_se
 		$thinkup_homepage_section3_link = get_permalink( $thinkup_homepage_section3_link );
 	}
 	if ( is_front_page() ) {
-		if($_GET[upper]==''||$_GET[lower]=='')
-		{
-			$d = date("Y-m-d",time());
-			$date = new DateTime($d);
-			$lower = $date->format("U");
-			$upper = $lower+86400;
-		}
-		else
-		{
-			$lower=$_GET[lower];
-			$upper=$_GET[upper];
-		}
-		$conn = mysqli_connect("localhost", "admin", "123EWQasd", "smartkeep");
-		$sql="select * from wp_usage where _time >= ". $lower ." and _time<=" . $upper;
-		mysqli_multi_query($conn,$sql);
-		$count=0;
-		$pass_time='';
-		$pass_usage='';
-		do
-		{
-			if ($result=mysqli_store_result($conn))
-			{
-				while ($row=mysqli_fetch_row($result))
-				{
-					if($count!=0)
-					{
-						$pass_time=$pass_time . " ";
-						$pass_usage=$pass_usage . " ";
-					}
-					$pass_time=$pass_time . $row[3];
-					$pass_usage=$pass_usage . $row[4];
-					$count++;
-				}
-				mysqli_free_result($result);
-			}
-		}while(mysqli_next_result($conn));
-		?>
+	?>
 		<center>
-		<h1 style="padding-top:50px;"><?=date('Y-m-d',$lower) . " ~ " . date('Y-m-d',$upper)?></h1>
+		<h1 id="show_tim" style="padding-top:50px;"></h1>
 		<ul>
 			<li>
-					<select class="tex" id="Year1" style="margin: 0px 5px 0px 5px;" onchange="month_init(1)"></select>
+				<select class="tex" id="Year1" style="margin: 0px 5px 0px 5px;" onchange="month_init(1)"></select>
 			</li>
 			<li>
-					<select class="tex" id="Month1" onchange="day_init(1)" style="display:none; margin: 0px 5px 0px 5px;"></select>
+				<select class="tex" id="Month1" onchange="day_init(1)" style="display:none; margin: 0px 5px 0px 5px;"></select>
 			</li>
 			<li>
-					<select class="tex" id="Day1" style="display:none; margin: 0px 5px 0px 5px;"></select>
+				<select class="tex" id="Day1" style="display:none; margin: 0px 5px 0px 5px;"></select>
 			</li>
 			<li>
-					<span> ~</span>
+				<span> ~</span>
 			</li>
 			<li>
-					<select class="tex" id="Year2" style="margin: 0px 5px 0px 5px;" onchange="month_init(2)"></select>
+				<select class="tex" id="Year2" style="margin: 0px 5px 0px 5px;" onchange="month_init(2)"></select>
 			</li>
 			<li>
-					<select class="tex" id="Month2" onchange="day_init(2)" style="display:none; margin: 0px 5px 0px 5px;"></select>
+				<select class="tex" id="Month2" onchange="day_init(2)" style="display:none; margin: 0px 5px 0px 5px;"></select>
 			</li>
 			<li>
-					<select class="tex" id="Day2" style="display:none; margin: 0px 5px 0px 5px;"></select>
+				<select class="tex" id="Day2" style="display:none; margin: 0px 5px 0px 5px;"></select>
 			</li>
 			<li>
-					<input class="btn" id="sear" type="button" value="查詢" onclick="_search()">
+				<select class="tex" id="_id" style="margin:0px 5px;"></select>
+			</li>
+			<li>
+				<select class="tex" id="_type" style="margin:0px 5px;">
+					<option value="0" selected="selected">Power usage</option>
+				</select>
+			</li>
+			<li>
+				<input class="btn" id="sear" type="button" value="查詢" onclick="_search()">
 			</li>
 		</ul>
 		<hr style="width:600px;">
-		<input id="see_analysis" type="button" value="Analysis" style="width:100%; background:#fff; color:#000;" onclick="show_analysis()">
-		<div id="analysis_section" style="width:100%; padding:30px 0px; display:none;">
-			<h1>Analysis</h1>
-		</div>
-		<input id="see_chart" type="button" value="See Chart" style="width:100%;" onclick="show_chart('<?=$upper?>','<?=$lower?>','<?=$pass_time?>','<?=$pass_usage?>')">
-		<div id="show_section" style="padding-top:50px; display:none;">
-			<h1>Chart</h1>
-			<div id="chart_container" style="width:100%; height:800px;" align="center">
-				<div id="chart_div" style="width:80%; height:auto; padding-top:50px;">
-					<canvas id="myChart"></canvas>
-				</div>
+		<div id="show_section" style="padding-top:10px;">
+                        <h1>Chart</h1>
+                        <div id="chart_container" style="width:100%; height:auto; padding-bottom:80px;" align="center">
+                                <div id="chart_div" style="width:80%; height:auto; padding-top:50px;">
+                                </div>
+                        </div>
+                </div>
+		<div id="statistics_section" style="width:100%; padding:30px 0px;">
+			<h1>Statistics</h1>
+			<div id="statistics_container" style="width:100%; height:auto; padding-bottom:100px;" align="center">
+				<div id="statistics_div" style="width:80%; height:auto; padding-top:50px;"></div>
 			</div>
 		</div>
 		</center>
-		<script>
-			$(document).ready(function() {
-				$("#see_chart").click(function(){
-					$("#see_chart").fadeOut(0)
-					$("#show_section").fadeIn(1000)
-				});
-				$("#see_analysis").click(function(){
-					$("#see_analysis").fadeOut(0)
-					$("#analysis_section").fadeIn(1000)
-				});
-			});
-		</script>
 		<?
 	}
 }

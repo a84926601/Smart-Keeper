@@ -33,9 +33,8 @@ function wp_dashboard_setup() {
 		else
 			wp_add_dashboard_widget( 'dashboard_browser_nag', __( 'Your browser is out of date!' ), 'wp_dashboard_browser_nag' );
 	}
-
 	// Right Now
-	if ( is_blog_admin() && current_user_can('edit_posts') )
+	/*if ( is_blog_admin() && current_user_can('edit_posts') )
 		wp_add_dashboard_widget( 'dashboard_right_now', __( 'At a Glance' ), 'wp_dashboard_right_now' );
 
 	if ( is_network_admin() )
@@ -54,7 +53,7 @@ function wp_dashboard_setup() {
 
 	// WordPress Events and News
 	wp_add_dashboard_widget( 'dashboard_primary', __( 'WordPress Events and News' ), 'wp_dashboard_events_news' );
-
+*/
 	if ( is_network_admin() ) {
 
 		/**
@@ -214,20 +213,129 @@ function wp_dashboard() {
 
 ?>
 <div id="dashboard-widgets" class="metabox-holder<?php echo $columns_css; ?>">
-	<div id="postbox-container-1" class="postbox-container">
-	<?php do_meta_boxes( $screen->id, 'normal', '' ); ?>
-	</div>
-	<div id="postbox-container-2" class="postbox-container">
-	<?php do_meta_boxes( $screen->id, 'side', '' ); ?>
-	</div>
-	<div id="postbox-container-3" class="postbox-container">
-	<?php do_meta_boxes( $screen->id, 'column3', '' ); ?>
-	</div>
-	<div id="postbox-container-4" class="postbox-container">
-	<?php do_meta_boxes( $screen->id, 'column4', '' ); ?>
+	<center>
+	<h1 id="show_tim" style="padding-top:10px;"></h1>
+        <ul style="display:inline;">
+                <li style="display:inline;">
+                        <select class="tex" id="Year1" style="margin: 0px 5px 0px 5px;" onchange="month_init(1)"></select>
+                </li>
+                <li style="display:inline;">
+                        <select class="tex" id="Month1" onchange="day_init(1)" style="display:none; margin: 0px 5px 0px 5px;"></select>
+                </li>
+                <li style="display:inline;">
+                        <select class="tex" id="Day1" style="display:none; margin: 0px 5px 0px 5px;"></select>
+                </li>
+                <li style="display:inline;">
+                        <span> ~</span>
+                </li>
+                <li style="display:inline;">
+                        <select class="tex" id="Year2" style="margin: 0px 5px 0px 5px;" onchange="month_init(2)"></select>
+                </li>
+                <li style="display:inline;">
+                        <select class="tex" id="Month2" onchange="day_init(2)" style="display:none; margin: 0px 5px 0px 5px;"></select>
+                </li>
+                <li style="display:inline;">
+                        <select class="tex" id="Day2" style="display:none; margin: 0px 5px 0px 5px;"></select>
+                </li>
+                <li style="display:inline;">
+                        <select class="tex" id="_id" style="margin:0px 5px;"></select>
+                </li>
+                <li style="display:inline;">
+                        <select class="tex" id="_type" style="margin:0px 5px;">
+                                <option value="0" selected="selected">Power usage</option>
+                        </select>
+                </li>
+                <li style="display:inline;">
+                        <input class="btn" id="sear" type="button" value="Search" onclick="_search()">
+                </li>
+        </ul>
+        <hr style="width:600px;">
+	</center>
+	<table>
+	<div id="show_section" style="padding-top:10px;">
+                <h1>Chart</h1>
+                <hr style="width:60px;" align="left">
+                <div id="chart_container" style="width:100%; height:auto; padding-bottom:80px;" align="center">
+                        <div id="chart_div" style="width:80%; height:auto; padding-top:50px;">
+                        </div>
+                </div>
+        </div>
+	<h1>Device Status</h1>
+	<hr width="150" align="left">
+	<tr><td>Device ID</td><td>Current Update Time</td><td>Current Usage(kWh)</td><td>Status</td></tr>
+	<?
+		$conn=mysqli_connect("140.125.33.31", "admin", "123EWQasd", "smartkeep");
+		mysqli_multi_query($conn,"select _pid,_usage,Max(_time) as _time from wp_usage group by _pid asc;");
+		do
+		{
+			if ($result=mysqli_store_result($conn))
+			{
+				while ($row=mysqli_fetch_row($result))
+				{
+					?>
+					<tr>
+					<td><?=$row[0]?></td>
+					<td><?=date('Y-m-d H:i:s',$row[2])?></td>
+					<td><?=$row[1]?></td>
+					<td>
+					<?
+						$tmp=$row[1]==0?0:1;
+						if($tmp!=0)
+						{
+							?>
+							<label class="switch">
+							<input id="switch<?=$row[0]?>" type="checkbox" onclick="on_off(<?=$row[0]?>)" checked>
+							<span class="slider round"></span>
+							</label>
+							<?
+						}
+						else
+						{
+							?>
+							<label class="switch">
+                                                        <input id="switch<?=$row[0]?>" type="checkbox" onclick="on_off(<?=$row[0]?>)">
+                                                        <span class="slider round"></span>
+                                                        </label>
+							<?
+						}
+					?>
+					</td>
+					</tr>
+					<?
+				}
+				mysqli_free_result($result);
+			}
+		}while(mysqli_next_result($conn));
+	?>
+	</table>
+	<div id="statistics_section" style="width:100%;">
+		<h1>Statistics</h1>
+		<hr style="width:100px;" align="left">
+		<div id="statistics_container" style="width:100%; height:auto; padding-bottom:100px;" align="center">
+			<div id="statistics_div" style="width:80%; height:auto; padding-top:50px;"></div>
+		</div>
 	</div>
 </div>
+<style>
+.tex
+{
+	width:auto;
+	height:50px;
+	border-radius:3px;
+	cursor:pointer;
+	box-shadow:3px 3px 4px rgba(0,0,0,0.5);
 
+}
+.btn
+{
+	width:auto;
+	height:35px;
+	border-radius:3px;
+	cursor:pointer;
+	box-shadow:3px 3px 4px rgba(0,0,0,0.5);
+	margin:0px 3px;
+}
+</style>
 <?php
 	wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
 	wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false );

@@ -21,10 +21,23 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js'></script>
-
+<script src="https://github.com/agershun/alasql/blob/develop/src/17alasql.js"></script>
+<script src="wp-includes/js/socket.io.js"></script>
 <?php wp_head(); ?>
 </head>
 <?
+	if($_GET[upper]==''||$_GET[lower]=='')
+	{
+		$d = date("Y-m-d",time());
+		$date = new DateTime($d);
+		$lower = $date->format("U");
+		$upper = $lower+86400;
+	}
+	else
+	{
+		$lower=$_GET[lower];
+		$upper=$_GET[upper];
+	}
 	do
 	{
 		if ($result=mysqli_store_result($conn))
@@ -43,7 +56,7 @@
 		}
 	}while(mysqli_next_result($conn));
 ?>
-<body <?php body_class(); ?> onload="init('<?=$_GET[upper]?>','<?=$_GET[lower]?>')">
+<body <?php body_class(); ?> onload="init('<?=$upper-1?>','<?=$lower?>')">
 <div id="body-core" class="hfeed site">
 
 	<header>
@@ -78,7 +91,8 @@
 			<div id="header-links" class="main-navigation">
 			<div id="header-links-inner" class="header-links">
 				<ul class="menu">
-					<li class="current_page_item"><a href="http://localhost/wordpress/">首頁</a></li>
+					<li class="current_page_item"><a href="/">首頁</a></li>
+					<li class="current_page_item"><a href="/wp-admin">後台</a></li>
 				</ul>
 			</div>
 			</div>
