@@ -5,11 +5,23 @@
 #include <WiFi.h>
 #include <WiFiUdp.h>
 #include <math.h>
+#include <Timer.h>
+#include <PubSubClient.h>
+
 int status = WL_IDLE_STATUS;
 char ssid[] = "ES711";  //  your network SSID (name)
 char pass[] = "es711wifi";       // your network password
-unsigned int localPort = 2390;      // local port to listen for UDP packets
+char mqttServer[] = "140.125.33.31";
+char clientID[] = "amebaClientES711";
+char publishTopic[] = "data";
+String msgStr;
+char json[40];
+WiFiClient wifiClient;
+PubSubClient client(mqttServer, 1883, wifiClient);
 
+unsigned int localPort = 2390;      // local port to listen for UDP packets
+unsigned long recTime=0;
+Timer Sec;
 IPAddress timeServer(118, 163, 81, 61); // time.stdtime.gov.tw NTP server
 const int timeZone = 8;     // Beijing Time, Taipei Time
 const int NTP_PACKET_SIZE = 48; // NTP time stamp is in the first 48 bytes of the message
@@ -33,17 +45,23 @@ void setup() {
     Serial.println(String("Attempting to connect to SSID: ")+ssid);
     status = WiFi.begin(ssid, pass);
     delay(10000);} // wait 10 seconds for connection:
+  wdt_reset();
   Serial.println("Connected to wifi");
-  printWifiStatus();
+  printWifiStatus(); 
   Serial.println("\nStarting connection to server...");
   Udp.begin(localPort);
+
+  recTime=getUnixTime();
+  Serial.println(recTime);
+  Sec.every(1000,passTime);
   
   Serial.println("LoRa Receiver");
-  //LoRa.setPins(7,9,8);
+  LoRa.setPins(9,8,7);
   if (!LoRa.begin(915E6)) {
     Serial.println("Starting LoRa failed!");
     while (1);}
   LoRa.setSignalBandwidth(62.5E3);
+  wdt_disable();
 }
 
 void loop() {
@@ -55,6 +73,7 @@ void loop() {
     int Type;
     int ID;
     float Data=0;
+    unsigned long getTime;
     while (LoRa.available()) {
       switch (i){
         case 0:
@@ -71,12 +90,47 @@ void loop() {
         break;}
       i++;}
       
-    if(Data!=0){
-      Serial.println(String("Type ")+Type+" ID "+ID+" Data "+Data);
-      Serial.println(getUnixTime());}
+    Serial.println(String("Type ")+Type+" ID "+ID+" Data "+Data);
+    if(unsigned long temp=getUnixTime()){ /*處理時間*/
+      Serial.println(String("recTime ")+recTime+" Net "+temp);
+      recTime=temp;}
       
     // print RSSI of packet
-    Serial.println(String("' with RSSI ")+LoRa.packetRssi());}
+    Serial.println(String("' with RSSI ")+LoRa.packetRssi());
+    
+    /*上傳至資料庫*/
+    DynamicJsonBuffer jsonBuffer;
+    JsonObject& root = jsonBuffer.createObject();
+    root["Type"] = Type;
+    root["ID"] = ID;
+    root["Data"] = Data;
+    root["Time"] = recTime;
+    root.printTo(msgStr);
+    int length=msgStr.length()+1;
+    char msgbuffer[length];
+    msgStr.toCharArray(msgbuffer,length+1);
+    if (!client.connected()){
+      reconnect();}
+    client.loop();
+    client.publish(publishTopic, msgbuffer);
+    }
+    Sec.update();
+}
+
+void reconnect(){
+  Serial.print("connecting");
+    while (!client.connected()){
+        if (client.connect(clientID)){
+            Serial.println("connected");
+        }else{
+            Serial.print("failed, rc=");
+            Serial.print(client.state());
+            Serial.println(" try again in 5 seconds");
+            delay(1000);}}
+}
+
+void passTime(){
+  recTime++;
 }
 
 unsigned long getUnixTime(){

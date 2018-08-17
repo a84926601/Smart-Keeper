@@ -30,7 +30,7 @@ void setup() {
     Serial.println("Starting LoRa failed!");
     while (1);
   }
-  sendrate.every(10000,message); //每10秒傳一次資料
+  sendrate.every(2000,message); //每10秒傳一次資料
 }
 
 void loop() {
