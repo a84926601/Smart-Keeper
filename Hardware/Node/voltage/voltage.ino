@@ -15,21 +15,24 @@ void setup() {
   Serial.begin(9600);
   delay(2);
   Serial.println("Start");
+  pinMode(5,INPUT);
 }
-
+double count=0;
+double avg=0;
 void loop() {
   // put your main code here, to run repeatedly:
   sensor_Value = analogRead(analogInPin);
   output_Value = map(sensor_Value, 0, 1023, 0, 220); //正弦波最高為220V
-  if(output_Value-110<220-output_Value)
-    Serial.println("It's 110V!");
-  else
-    Serial.println("It's 220V!");
   
   /*Test Block*/
   //analogWrite(analogOutPin,output_Value);
   Serial.print("sensor = ");
   Serial.print(sensor_Value);
+  count++;
+  avg+=output_Value;
   Serial.print("t output = ");
   Serial.println(output_Value);
+  Serial.print("t avg = ");
+  Serial.println(avg/count);
+  Serial.println(digitalRead(5));
 }
